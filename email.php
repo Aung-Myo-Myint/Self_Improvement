@@ -2,4 +2,6 @@
 
 echo "Sending Email";
 
+$a="temperature";
+
 ?>
