@@ -55,9 +55,9 @@ require 'config.php';
                 <td><?php echo $value['Description'];?></td>
                 <td><?php  echo date('Y-m-d',strtotime($value['CreatedAt']))?></td>
                 <td>
-   <a href="EditList.php?id=<?php  echo $value["List_id"]?>" type="button" class="btn btn-warning">Edit</a>
+   <a href="EditList.php" type="button" class="btn btn-warning">Edit</a>
 
-   <a href="Delete.php?id=<?php  echo $value["List_id"]?>" type="button" class="btn btn-danger">Delete</a>
+   <a href="#" type="button" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
                  
