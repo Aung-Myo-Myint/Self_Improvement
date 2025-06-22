@@ -1,100 +1,146 @@
 <?php 
 require 'config.php';
 
+// ────────────────────────────────────────────────────────────────────────
+//  Handle form submit + update
+// ────────────────────────────────────────────────────────────────────────
 if ($_POST) {
     $title = $_POST['title'];
-    $desc = $_POST['description'];
-    $id = $_POST['List_id'];
+    $desc  = $_POST['description'];
+    $id    = $_POST['List_id'];
 
-    $sql = "UPDATE todo SET Title = :title, Description = :desc WHERE List_id = :id";
-    $pdostatement = $pdo->prepare($sql);
-    $result = $pdostatement->execute([
+    $sql  = "UPDATE todo SET Title = :title, Description = :desc WHERE List_id = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
         ':title' => $title,
-        ':desc' => $desc,
-        ':id' => $id
+        ':desc'  => $desc,
+        ':id'    => $id
     ]);
 
-    if ($result) {
-        echo "<script>alert('To-Do has been updated');window.location.href='index.php'</script>";
-    }
-} else {
-    $pdostatement = $pdo->prepare("SELECT * FROM todo WHERE List_id = :id");
-    $pdostatement->execute([':id' => $_GET['id']]);
-    $result = $pdostatement->fetchAll();
+    echo "<script>alert('Task updated!');window.location.href='index.php';</script>";
+    exit;
+}
+
+// ────────────────────────────────────────────────────────────────────────
+//  Fetch the record we want to edit
+// ────────────────────────────────────────────────────────────────────────
+$stmt = $pdo->prepare("SELECT * FROM todo WHERE List_id = :id");
+$stmt->execute([':id' => $_GET['id'] ?? 0]);
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$result) {
+    echo "<script>alert('Task not found');window.location.href='index.php';</script>";
+    exit;
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>✏️ Edit Task</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberCore | Edit Task</title>
+  <!-- Bootstrap + Icons + Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rubik:wght@400;600&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --clr-primary:#00eaff;
+      --clr-accent:#ff007d;
+    }
     body {
-      background: #f5f7fa;
-      font-family: 'Segoe UI', sans-serif;
+      background:#0e0f11;
+      color:#e0e0e0;
+      font-family:'Rubik',sans-serif;
+      overflow-x:hidden;
     }
+    /* ───── nav ───── */
+    .navbar {
+      background:linear-gradient(90deg,var(--clr-primary),var(--clr-accent));
+      padding:1rem 0;
+    }
+    .navbar-brand {
+      font-family:'Orbitron',sans-serif;
+      font-weight:800;
+      color:#000;
+    }
+    /* ───── hero banner ───── */
+    .hero {
+      background:url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      height:280px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+    }
+    .hero::after {
+      content:'';
+      position:absolute;inset:0;
+      background:rgba(0,0,0,.55);
+    }
+    .hero h1 {
+      position:relative;
+      font-family:'Orbitron',sans-serif;
+      font-size:2.5rem;
+      color:var(--clr-primary);
+      z-index:1;
+    }
+    /* ───── form card ───── */
     .card {
-      border-radius: 1rem;
+      background:#1b1c1f;
+      border:1px solid var(--clr-primary);
+      border-radius:1rem;
+      box-shadow:0 0 16px rgba(0,234,255,.2);
     }
-    .form-label {
-      font-weight: 600;
+    .btn-neon {
+      background:var(--clr-accent);
+      border:none;
+      color:#000;
+      font-weight:600;
+      box-shadow:0 0 8px var(--clr-accent);
     }
-    .fade-in {
-      animation: fadeIn 0.6s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .btn-neon:hover {box-shadow:0 0 12px var(--clr-accent);}
+    label {font-weight:600;}
   </style>
 </head>
 <body>
+  <!-- nav -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="index.php"><i class="bi bi-kanban-fill"></i> CYBERCORE</a>
+    </div>
+  </nav>
 
-<!-- Navbar -->
-<nav class="navbar navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand" href="index.php">🗂️ My To Do List</a>
-  </div>
-</nav>
+  <!-- hero -->
+  <section class="hero mb-5">
+    <h1><i class="bi bi-pencil-fill me-2"></i>Edit Your Task</h1>
+  </section>
 
-<!-- Main Content -->
-<div class="container mt-5 fade-in">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-lg">
-        <div class="card-body p-4">
-          <h3 class="mb-4 fw-bold text-primary"><i class="bi bi-pencil-square me-2"></i>Edit Task</h3>
-          <form action="" method="POST">
+  <!-- main content -->
+  <div class="container fade-in">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="card p-4">
+          <h3 class="text-center text-primary mb-4">Update Details</h3>
+          <form method="POST" novalidate>
             <div class="mb-3">
               <label for="title" class="form-label">Title</label>
-              <input type="text" class="form-control" name="title" id="title" required 
-                     value="<?php echo htmlspecialchars($result[0]['Title']); ?>">
+              <input type="text" id="title" name="title" class="form-control" required value="<?= htmlspecialchars($result['Title']); ?>" />
             </div>
-
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
-              <textarea name="description" id="description" class="form-control" rows="5"><?php echo htmlspecialchars($result[0]['Description']); ?></textarea>
+              <textarea id="description" name="description" rows="5" class="form-control"><?= htmlspecialchars($result['Description']); ?></textarea>
             </div>
-
-            <input type="hidden" name="List_id" value="<?php echo $result[0]['List_id']; ?>">
-
+            <input type="hidden" name="List_id" value="<?= $result['List_id']; ?>" />
             <div class="d-flex justify-content-between">
-              <a href="index.php" class="btn btn-warning">
-                <i class="bi bi-arrow-left"></i> Back
-              </a>
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-save"></i> Update
-              </button>
+              <a href="index.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancel</a>
+              <button class="btn btn-neon"><i class="bi bi-save"></i> Save Changes</button>
             </div>
           </form>
         </div>
       </div>
     </div>
   </div>
-</div>
 
 </body>
 </html>
