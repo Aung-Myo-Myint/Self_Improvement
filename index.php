@@ -10,161 +10,131 @@ $result = $pdostatement->fetchAll();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📝 To‑Do // CYBERCORE</title>
+  <title>CyberCore Tasks | Productivity Platform</title>
 
-  <!-- Bootstrap & Icons -->
+  <!-- Bootstrap, Icons, Google Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Orbitron font for neo‑tech headings -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== cyber‑punk palette ===== */
-    :root{
-      --c‑bg‑1:#05060a;
-      --c‑bg‑2:#2e005f;
-      --c‑neon‑pink:#ff007d;
-      --c‑neon‑blue:#00eaff;
-      --c‑acid‑green:#b6ff00;
+    body {
+      background: #0e0f11;
+      color: #e0e0e0;
+      font-family: 'Rubik', sans-serif;
     }
 
-    /* ==== global look ==== */
-    body{
-      background: radial-gradient(circle at top right,var(--c‑bg‑2),var(--c‑bg‑1) 70%);
-      min-height:100vh;
-      color:#cfd0d3;
-      font-family: 'Segoe UI', sans-serif;
-      overflow-x:hidden;
-    }
-    .scanlines::before{           /* faint CRT scan‑lines */
-      content:'';
-      position:fixed;inset:0;
-      background: repeating-linear-gradient(
-                 0deg,
-                 transparent 0,
-                 rgba(255,255,255,.03) 2px,
-                 transparent 4px);
-      pointer-events:none;
-    }
-    h1,h4,nav .navbar-brand{
-      font-family:'Orbitron',sans-serif;
-      letter-spacing:1px;
+    .navbar {
+      background: linear-gradient(90deg, #00eaff, #ff007d);
+      padding: 1rem;
     }
 
-    /* nav */
-    nav.navbar{
-      background:linear-gradient(90deg,var(--c‑neon‑pink),var(--c‑neon‑blue));
-    }
-    nav .navbar-brand{
-      color:#000;
-      font-weight:800;
-      text-shadow:0 0 6px rgba(0,0,0,.7);
+    .navbar-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      color: #000;
     }
 
-    /* neon button */
-    .btn-neon{
-      position:relative;
-      color:#000;
-      font-weight:600;
-      background:var(--c‑acid‑green);
-      border:none;
-      box-shadow:0 0 8px var(--c‑acid‑green),0 0 16px var(--c‑acid‑green);
-      transition:transform .15s ease;
+    .hero {
+      background: url('https://images.unsplash.com/photo-1633158829870-6229507f5d6e?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
     }
-    .btn-neon:hover{ transform:translateY(-2px) scale(1.03); }
 
-    /* card & table styling */
-    .card{
-      background:rgba(0,0,0,.55);
-      border:1px solid var(--c‑neon‑blue);
-      border-radius:1rem;
-      box-shadow:0 0 20px rgba(0,234,255,.4);
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
     }
-    .table thead{
-      background:rgba(0,234,255,.15);
-      color:var(--c‑neon‑blue);
-      border-bottom:2px solid var(--c‑neon‑blue);
-    }
-    .table tbody tr{
-      transition:background .2s ease;
-    }
-    .table tbody tr:hover{
-      background:rgba(255,0,125,.1);
-    }
-    .table td,.table th{vertical-align:middle;}
 
-    /* action buttons */
-    .btn-action{
-      border:none;
-      padding:.25rem .6rem;
-      font-size:.75rem;
-      font-weight:600;
-      color:#000;
+    .btn-neon {
+      background-color: #b6ff00;
+      color: #000;
+      font-weight: 600;
+      border: none;
+      box-shadow: 0 0 8px #b6ff00;
     }
-    .btn-edit{
-      background:var(--c‑neon‑blue);
-      box-shadow:0 0 6px var(--c‑neon‑blue);
+
+    .card {
+      background: #1b1c1f;
+      border: 1px solid #00eaff;
+      border-radius: 1rem;
+      box-shadow: 0 0 16px rgba(0, 234, 255, 0.2);
     }
-    .btn-delete{
-      background:var(--c‑neon‑pink);
-      box-shadow:0 0 6px var(--c‑neon‑pink);
+
+    .table thead {
+      background: rgba(0, 234, 255, 0.1);
+      color: #00eaff;
     }
-    .btn-edit:hover,.btn-delete:hover{transform:scale(1.05);}
+
+    footer {
+      background: #121214;
+      color: #888;
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 4rem;
+    }
   </style>
 </head>
 
-<body class="scanlines">
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="#">CyberCore</a>
+      <a href="AddList.php" class="btn btn-neon">+ New Task</a>
+    </div>
+  </nav>
 
-<!-- neon nav -->
-<nav class="navbar navbar-expand shadow-sm py-2">
-  <div class="container">
-    <a class="navbar-brand" href="#"><i class="bi bi-kanban-fill"></i> CYBER TODO</a>
-    <a href="AddList.php" class="btn btn-neon"><i class="bi bi-plus-circle"></i> New Task</a>
-  </div>
-</nav>
-
-<!-- main -->
-<div class="container py-5 fade-in">
-  <div class="card shadow-lg">
-    <div class="card-body px-4 py-5">
-      <h4 class="mb-4 text-uppercase" style="color:var(--c‑neon‑blue);"><i class="bi bi-list-check"></i> Task Dashboard</h4>
-
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Created</th>
-              <th class="text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php $i=1; foreach($result as $row): ?>
-            <tr>
-              <th scope="row"><?= $i++; ?></th>
-              <td><?= htmlspecialchars($row['Title']); ?></td>
-              <td class="text-truncate" style="max-width:320px;"><?= htmlspecialchars($row['Description']); ?></td>
-              <td><?= date('Y-m-d',strtotime($row['CreatedAt'])); ?></td>
-              <td class="text-center">
-                <a href="EditList.php?id=<?= $row['List_id']; ?>" class="btn btn-action btn-edit me-1">
-                  <i class="bi bi-pencil-fill"></i>
-                </a>
-                <a href="Delete.php?id=<?= $row['List_id']; ?>" class="btn btn-action btn-delete"
-                   onclick="return confirm('Delete this task?')">
-                  <i class="bi bi-trash-fill"></i>
-                </a>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
-
+  <div class="hero text-center">
+    <div>
+      <h1>Manage Tasks in Style</h1>
+      <p class="lead">Stay focused. Stay productive. With CyberCore.</p>
     </div>
   </div>
-</div>
+
+  <div class="container py-5">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="text-primary mb-4"><i class="bi bi-kanban-fill"></i> Your Tasks</h3>
+
+        <div class="table-responsive">
+          <table class="table table-striped table-dark">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php $i=1; foreach($result as $row): ?>
+              <tr>
+                <td><?= $i++; ?></td>
+                <td><?= htmlspecialchars($row['Title']); ?></td>
+                <td><?= htmlspecialchars($row['Description']); ?></td>
+                <td><?= date('Y-m-d', strtotime($row['CreatedAt'])); ?></td>
+                <td>
+                  <a href="EditList.php?id=<?= $row['List_id']; ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></a>
+                  <a href="Delete.php?id=<?= $row['List_id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this task?')"><i class="bi bi-trash"></i></a>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 CyberCore Inc. | Built for doers, dreamers, and developers.</p>
+  </footer>
 
 </body>
 </html>
